@@ -1,7 +1,13 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const { connectDB } = require("./config/db");
+
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import { toNodeHandler } from "better-auth/node";
+import { connectDB } from "./config/db.js";
+import { createAuth } from "./config/auth.js";
+import servicesRoutes from "./routes/services.routes.js";
+import adminServicesRoutes from "./routes/adminServices.routes.js";
+import tokenRoutes from "./routes/token.routes.js";
 
 dotenv.config();
 
@@ -15,18 +21,31 @@ app.use(
   })
 );
 
-app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "SalonBook API is running!",
-  });
-});
-
 const startServer = async () => {
   try {
     await connectDB();
+
+    const auth = createAuth();
+
+    // Better Auth must be mounted before express.json()
+    app.all("/api/auth/{*any}", toNodeHandler(auth));
+
+    app.use(express.json());
+
+    app.use("/api/token", tokenRoutes);
+
+    // Public service routes
+    app.use("/api/services", servicesRoutes);
+
+    // Admin-only service management routes
+    app.use("/api/admin/services", adminServicesRoutes);
+
+    app.get("/", (req, res) => {
+      res.status(200).json({
+        success: true,
+        message: "SalonBook API is running!",
+      });
+    });
 
     app.listen(PORT, () => {
       console.log(`SalonBook server running on port ${PORT}`);

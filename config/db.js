@@ -1,13 +1,12 @@
-const { MongoClient } = require("mongodb");
+
+import { MongoClient } from "mongodb";
 
 let client;
 let db;
 
-const connectDB = async () => {
+export const connectDB = async () => {
   try {
-    if (db) {
-      return db;
-    }
+    if (db) return db;
 
     const uri = process.env.MONGODB_URI;
 
@@ -29,7 +28,7 @@ const connectDB = async () => {
   }
 };
 
-const getDB = () => {
+export const getDB = () => {
   if (!db) {
     throw new Error("Database is not connected yet");
   }
@@ -37,4 +36,10 @@ const getDB = () => {
   return db;
 };
 
-module.exports = { connectDB, getDB };
+export const getMongoClient = () => {
+  if (!client) {
+    throw new Error("MongoDB client is not connected yet");
+  }
+
+  return client;
+};

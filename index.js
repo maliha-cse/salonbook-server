@@ -10,6 +10,7 @@ import adminServicesRoutes from "./routes/adminServices.routes.js";
 import tokenRoutes from "./routes/token.routes.js";
 import appointmentsRoutes from "./routes/appointments.routes.js";
 import { createAppointmentIndexes } from "./utils/appointmentIndexes.js";
+import adminAppointmentsRoutes from "./routes/adminAppointments.routes.js";
 
 dotenv.config();
 
@@ -46,6 +47,9 @@ const startServer = async () => {
 
     // Customer appointment routes
     app.use("/api/appointments", appointmentsRoutes);
+
+    // Admin appointment management routes
+    app.use("/api/admin/appointments", adminAppointmentsRoutes);
 
     app.get("/", (req, res) => {
       res.status(200).json({

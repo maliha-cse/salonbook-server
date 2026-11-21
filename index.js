@@ -8,6 +8,8 @@ import { createAuth } from "./config/auth.js";
 import servicesRoutes from "./routes/services.routes.js";
 import adminServicesRoutes from "./routes/adminServices.routes.js";
 import tokenRoutes from "./routes/token.routes.js";
+import appointmentsRoutes from "./routes/appointments.routes.js";
+import { createAppointmentIndexes } from "./utils/appointmentIndexes.js";
 
 dotenv.config();
 
@@ -25,6 +27,8 @@ const startServer = async () => {
   try {
     await connectDB();
 
+    await createAppointmentIndexes();
+
     const auth = createAuth();
 
     // Better Auth must be mounted before express.json()
@@ -39,6 +43,9 @@ const startServer = async () => {
 
     // Admin-only service management routes
     app.use("/api/admin/services", adminServicesRoutes);
+
+    // Customer appointment routes
+    app.use("/api/appointments", appointmentsRoutes);
 
     app.get("/", (req, res) => {
       res.status(200).json({

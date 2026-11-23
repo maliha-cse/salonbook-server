@@ -46,6 +46,11 @@ export const createAuth = () => {
           defaultValue: false,
           input: false,
         },
+        phone: {
+          type: "string",
+          required: false,
+          input: true,
+        },
       },
     },
   });

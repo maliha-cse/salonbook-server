@@ -21,6 +21,7 @@ export const verifyUser = async (req, res, next) => {
       headers: fromNodeHeaders(req.headers),
     });
 
+
     if (!session || !session.user) {
       return res.status(401).json({
         success: false,

@@ -24,11 +24,29 @@ export const createAppointment = async (req, res) => {
     }
 
     // Validate appointment date
-    const selectedDate = new Date(`${appointmentDate}T00:00:00`);
+    const dateParts = appointmentDate.match(
+      /^(\d{4})-(\d{2})-(\d{2})$/
+    );
 
+    if (!dateParts) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a valid appointment date.",
+      });
+    }
+
+    const year = Number(dateParts[1]);
+    const month = Number(dateParts[2]);
+    const day = Number(dateParts[3]);
+
+    // Create date using local timezone
+    const selectedDate = new Date(year, month - 1, day);
+
+    // Check whether the date is actually valid
     if (
-      Number.isNaN(selectedDate.getTime()) ||
-      selectedDate.toISOString().slice(0, 10) !== appointmentDate
+      selectedDate.getFullYear() !== year ||
+      selectedDate.getMonth() !== month - 1 ||
+      selectedDate.getDate() !== day
     ) {
       return res.status(400).json({
         success: false,
